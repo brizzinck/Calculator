@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 public class Calculator : MonoBehaviour
 {
-    private ControllOperator controllOperators;
+    private ControllOperators controllOperators;
     private double result = 0;
     private string output = string.Empty;
     private Stack<char> operStack = new Stack<char>();
@@ -17,7 +17,7 @@ public class Calculator : MonoBehaviour
     }
     private void Start()
     {
-        controllOperators = new ControllOperator();
+        controllOperators = new ControllOperators();
     }
     private string Calculating(string input) => Counting(GetExpression(input));
     private string GetExpression(string input)
@@ -91,7 +91,7 @@ public class Calculator : MonoBehaviour
                 if (Char.IsDigit(input[i]) || input[i] == '-')
                     i = WriteNumbers(input, i);
                 else if (controllOperators.IsChar(input[i]))
-                    CountingTwoNumbers(input[i]);    
+                    CountingTwoNumbers(input[i]);
             }
             return temp.Peek().ToString();
         }

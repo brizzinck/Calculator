@@ -6,10 +6,10 @@ using TMPro;
 public class ControllerInformation : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _textInformation;
-    private ControllOperator _controllOperators;
+    private ControllOperators _controllOperators;
     private char _lastChar;
     private char _lastOperator;
-    
+
     public void AcceptInformation(Text newTextInformation)
     {
         Display(CheckInformation(newTextInformation));
@@ -30,7 +30,7 @@ public class ControllerInformation : MonoBehaviour
     }
     private void Start()
     {
-        _controllOperators = new ControllOperator();
+        _controllOperators = new ControllOperators();
     }
     private void Display(string text)
     {
