@@ -17,15 +17,12 @@ public class ControllerInformation : MonoBehaviour
     public void AllClear()
     {
         _textInformation.text = string.Empty;
-        _lastChar = ' ';
-        _lastOperator = ' ';
+        ResetLastChar();
     }
     public void ClearLastChar()
     {
         if (_textInformation.text.Length == 0) return;
         _textInformation.text = _textInformation.text.Remove(_textInformation.text.Length - 1);
-        if (_textInformation.text.Length - 1 >= 0)
-            _lastChar = _textInformation.text[_textInformation.text.Length - 1];
         SetLastChar();
     }
     private void Start()
@@ -45,8 +42,8 @@ public class ControllerInformation : MonoBehaviour
         {
             if (char.TryParse(newTextInformation.text, out charOperation))
             {
-                if (charOperation == ',' && _lastOperator == ',') return string.Empty;
-                else if ((charOperation == '(' || (charOperation == '-' && _lastOperator != '-'))) return charOperation.ToString();
+                if (charOperation == ',') return IsComma();
+                else if (charOperation == '(' || (charOperation == '-' && _lastOperator != '-')) return charOperation.ToString();
                 else if (_textInformation.text.Length != 0)
                 {
                     if (!char.IsDigit(_lastChar) && !IsArc(_lastChar) && !IsArc(charOperation))
@@ -64,12 +61,24 @@ public class ControllerInformation : MonoBehaviour
     }
     private void SetLastChar()
     {
+        ResetLastChar();
         for (int i = 0; i < _textInformation.text.Length; i++)
         {
             _lastChar = _textInformation.text[i];
             if (_controllOperators.IsChar(_lastChar, "-+/*^%,"))
                 _lastOperator = _lastChar;
         }
+    }
+    private string IsComma()
+    {
+        if (_textInformation.text.Length != 0)
+        {
+            if (_lastOperator != ',' && !_controllOperators.IsChar(_textInformation.text[_textInformation.text.Length - 1], ",-+/*^()%"))
+            {
+                return ",";
+            }
+        }
+        return string.Empty;
     }
     private bool IsArc(char ñ)
     {
@@ -87,6 +96,11 @@ public class ControllerInformation : MonoBehaviour
                 i--;
             }
         }
+    }
+    private void ResetLastChar()
+    {
+        _lastChar = ' ';
+        _lastOperator = ' ';
     }
 
 }

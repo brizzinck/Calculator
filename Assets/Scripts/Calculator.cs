@@ -20,22 +20,14 @@ public class Calculator : MonoBehaviour
         controllOperators = new ControllOperators();
     }
     private string Calculating(string input) => Counting(GetExpression(input));
+
     private string GetExpression(string input)
     {
         output = string.Empty;
         operStack = new Stack<char>();
-
         try
         {
-            for (int i = 0; i < input.Length; i++)
-            {
-                if (IsDelimeter(input[i]))
-                    continue;
-                if (Char.IsDigit(input[i]) || input[i] == '-')
-                    i = DistributeNumbers(input, i);
-                if (controllOperators.IsChar(input[i]))
-                    DistributeOperators(input[i]);
-            }
+            MakeExpression(input);
             while (operStack.Count > 0)
                 output += operStack.Pop() + " ";
             return output;
@@ -45,41 +37,63 @@ public class Calculator : MonoBehaviour
             return "Вираз невірний!!!";
         }
     }
+    private void MakeExpression(string input)
+    {
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (IsDelimeter(input[i])) continue;
+            i = AllDistribute(input, i);
+        }
+    }
+    private int AllDistribute(string input, int i)
+    {
+        int y = i;
+        y = DistributeNumbers(input, y);
+        DistributeOperators(input[i]);
+        return y;
+    }
     private int DistributeNumbers(string input, int i)
     {
-        while (!IsDelimeter(input[i]) && !controllOperators.IsChar(input[i]))
+        if (Char.IsDigit(input[i]) || input[i] == '-')
         {
-            output += input[i];
-            i++;
-            if (i == input.Length) break;
-        }
-        i--;
+            while (!IsDelimeter(input[i]) && !controllOperators.IsChar(input[i]))
+            {
+                output += input[i];
+                i++;
+                if (i == input.Length) break;
+            }
+            i--;
+        }   
         return i;
     }
     private void DistributeOperators(char c)
     {
-        if (c == '(')
-            operStack.Push(c);
-        else
+        if (controllOperators.IsChar(c))
+        {
+            if (c == '(')
+                operStack.Push(c);
+            else
                     if (c == ')')
-        {
-            char s = operStack.Pop();
-
-            while (s != '(')
             {
-                output += s.ToString() + ' ';
-                s = operStack.Pop();
+                char s = operStack.Pop();
+
+                while (s != '(')
+                {
+                    output += s.ToString() + ' ';
+                    s = operStack.Pop();
+                }
             }
+            else
+            {
+                if (operStack.Count > 0)
+                    if (GetPriority(c) <= GetPriority(operStack.Peek()))
+                        output += operStack.Pop().ToString();
+                operStack.Push(char.Parse(c.ToString()));
+            }
+            output += " ";
         }
-        else
-        {
-            if (operStack.Count > 0)
-                if (GetPriority(c) <= GetPriority(operStack.Peek()))
-                    output += operStack.Pop().ToString();
-            operStack.Push(char.Parse(c.ToString()));
-        }
-        output += " ";
     }
+
     private string Counting(string input)
     {
         result = 0;
@@ -129,6 +143,7 @@ public class Calculator : MonoBehaviour
         }
         temp.Push(result);
     }
+
     private bool IsDelimeter(char c)
     {
         if ((" ".IndexOf(c) != -1))
