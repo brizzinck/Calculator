@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ControllOperators : MonoBehaviour
+public class ControllOperators
 {
     public string EditingOperators(string input)
     {
